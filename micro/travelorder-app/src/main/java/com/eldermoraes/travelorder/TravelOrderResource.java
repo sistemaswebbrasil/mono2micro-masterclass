@@ -5,7 +5,6 @@ import java.util.stream.Collectors;
 
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
-import io.smallrye.common.annotation.RunOnVirtualThread;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.Consumes;
@@ -18,7 +17,7 @@ import jakarta.ws.rs.core.MediaType;
 
 @Path("travelorder")
 public class TravelOrderResource {
-    
+
     @Inject
     @RestClient
     FlightService flightService;
@@ -27,26 +26,27 @@ public class TravelOrderResource {
     @RestClient
     HotelService hotelService;
 
-
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    @RunOnVirtualThread
-    public List<TravelOrderDTO> orders(){
-        
-        System.out.println(Thread.currentThread());
-        return TravelOrder.<TravelOrder>listAll().stream()
-            .map(
-                order -> TravelOrderDTO.of(
-                    order, 
-                    flightService.findByTravelOrderId(order.id), 
-                    hotelService.findByTravelOrderId(order.id) 
-                )
-            ).collect(Collectors.toList());
+    public List<TravelOrderDTO> orders() {
+
+        System.out.println("#########################");
+        System.out.println("Teste");
+        var orders = TravelOrder.<TravelOrder>listAll().stream()
+                .map(
+                        order -> TravelOrderDTO.of(
+                                order,
+                                flightService.findByTravelOrderId(order.id),
+                                hotelService.findByTravelOrderId(order.id)))
+                .collect(Collectors.toList());
+        System.out.println(orders);
+        System.out.println("#########################");
+        return orders;
     }
 
     @GET
     @Path("findById")
-    public TravelOrder findById(@QueryParam("id") long id){
+    public TravelOrder findById(@QueryParam("id") long id) {
         return TravelOrder.findById(id);
     }
 
@@ -54,7 +54,12 @@ public class TravelOrderResource {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public TravelOrder newTravelOrder(TravelOrderDTO orderDto){
+    public TravelOrder newTravelOrder(TravelOrderDTO orderDto) {
+        try {
+            
+
+        System.out.println("#########################");
+        System.out.println("Teste");
         TravelOrder order = new TravelOrder();
         order.id = null;
         order.persist();
@@ -70,8 +75,12 @@ public class TravelOrderResource {
         hotel.setTravelOrderId(order.id);
         hotelService.newHotel(hotel);
 
+        System.out.println("#########################");
         return order;
+    } catch (Exception e) {
+        e.printStackTrace();
+        throw new RuntimeException(e);
+    }        
     }
-
 
 }

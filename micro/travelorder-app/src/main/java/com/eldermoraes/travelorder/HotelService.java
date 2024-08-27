@@ -15,9 +15,8 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
 
-@RegisterRestClient(baseUri = "http://hotel-app-eldermoraes-dev.apps.sandbox-m2.ll9k.p1.openshiftapps.com/hotel")
-public interface HotelService {
-    
+@RegisterRestClient(configKey="hotel-api")
+public interface HotelService {    
 
     @GET
     @Path("findById")
